@@ -5,10 +5,11 @@ import { useState, useEffect } from 'react';
 export default function Home() {
   const [stats, setStats] = useState({ users: 0, activeUsers: 0, contents: 0, messages: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [botStatus, setBotStatus] = useState('checking');
 
   useEffect(() => {
     fetchStats();
+    checkBot();
   }, []);
 
   const fetchStats = async () => {
@@ -17,98 +18,103 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         setStats(data);
-      } else {
-        setError('Configure o Supabase para ver dados reais');
       }
     } catch (err) {
-      setError('Erro ao carregar dados');
+      console.error('Erro stats:', err);
     } finally {
       setLoading(false);
     }
   };
 
+  const checkBot = async () => {
+    try {
+      const res = await fetch('/api/bot-status');
+      if (res.ok) {
+        const data = await res.json();
+        setBotStatus(data.status || 'offline');
+      } else {
+        setBotStatus('offline');
+      }
+    } catch {
+      setBotStatus('offline');
+    }
+  };
+
+  const menuItems = [
+    { title: 'Mensagens', desc: 'Editar mensagens do bot', icon: 'M', path: '/mensagens', color: '#8b5cf6' },
+    { title: 'Conteúdos', desc: 'Gerir conteúdos', icon: 'C', path: '/conteudos', color: '#60a5fa' },
+    { title: 'Botões', desc: 'Configurar botões', icon: 'B', path: '/botoes', color: '#22c55e' },
+    { title: 'Utilizadores', desc: 'Ver utilizadores', icon: 'U', path: '/utilizadores', color: '#a78bfa' },
+    { title: 'Definições', desc: 'Configurar bot', icon: 'S', path: '/configuracoes', color: '#f59e0b' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-[#8b5cf6]/30">
+    <div className="min-h-screen bg-[#0a0a0f]">
+      <header className="sticky top-0 z-50 bg-[#0a0a0f]/95 backdrop-blur-xl border-b border-[#8b5cf6]/25">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center font-black text-lg shadow-lg shadow-[#8b5cf6]/40">
-              L
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center font-black text-lg shadow-lg shadow-[#8b5cf6]/40">L</div>
+            <div>
+              <h1 className="text-lg font-black text-gradient">LUNA VIP</h1>
+              <p className="text-[10px] text-gray-500">Painel Administrativo</p>
             </div>
-            <h1 className="text-xl font-black text-gradient">LUNA VIP</h1>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-xs text-gray-400">Bot Online</span>
+            <span className={`w-2 h-2 rounded-full ${botStatus === 'online' ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
+            <span className="text-xs text-gray-400">{botStatus === 'online' ? 'Online' : 'Offline'}</span>
           </div>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Greeting */}
         <div className="mb-8">
-          <h2 className="text-3xl font-black mb-2">Dashboard</h2>
-          <p className="text-gray-400">Controle total do seu bot Telegram</p>
+          <h2 className="text-3xl font-black mb-1">Dashboard</h2>
+          <p className="text-gray-400 text-sm">Controle total do seu bot Telegram</p>
         </div>
 
-        {/* Stats */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[#8b5cf6]/30 border-t-[#8b5cf6] rounded-full animate-spin"></div>
-          </div>
-        ) : error ? (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 text-center">
-            <p className="text-red-400">{error}</p>
+            <div className="w-10 h-10 border-2 border-[#8b5cf6]/30 border-t-[#8b5cf6] rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
             {[
               { label: 'Utilizadores', value: stats.users, color: '#8b5cf6' },
               { label: 'Ativos', value: stats.activeUsers, color: '#22c55e' },
               { label: 'Conteúdos', value: stats.contents, color: '#60a5fa' },
               { label: 'Mensagens', value: stats.messages, color: '#a78bfa' },
-            ].map((stat, i) => (
-              <div key={i} className="glass rounded-2xl p-6 hover:border-[#8b5cf6] transition-all duration-300 hover:shadow-lg hover:shadow-[#8b5cf6]/20">
-                <p className="text-xs text-gray-400 mb-2 uppercase tracking-wider">{stat.label}</p>
-                <p className="text-3xl font-black" style={{ color: stat.color }}>{stat.value}</p>
+            ].map((s, i) => (
+              <div key={i} className="glass rounded-2xl p-5 card-hover transition-all duration-300">
+                <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-2">{s.label}</p>
+                <p className="text-2xl font-black" style={{ color: s.color }}>{s.value}</p>
               </div>
             ))}
           </div>
         )}
 
-        {/* Navigation Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          {[
-            { title: 'Mensagens', icon: 'M', path: '/mensagens' },
-            { title: 'Conteúdos', icon: 'C', path: '/conteudos' },
-            { title: 'Botões', icon: 'B', path: '/botoes' },
-            { title: 'Utilizadores', icon: 'U', path: '/utilizadores' },
-            { title: 'Configurações', icon: 'S', path: '/configuracoes' },
-          ].map((item, i) => (
-            <a
-              key={i}
-              href={item.path}
-              className="glass rounded-2xl p-6 text-center hover:border-[#8b5cf6] transition-all duration-300 hover:shadow-lg hover:shadow-[#8b5cf6]/20 group"
-            >
-              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] flex items-center justify-center font-black text-lg group-hover:scale-110 transition-transform">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          {menuItems.map((item, i) => (
+            <a key={i} href={item.path} className="glass rounded-2xl p-5 card-hover transition-all duration-300 text-center">
+              <div className="w-11 h-11 mx-auto mb-3 rounded-xl flex items-center justify-center font-black text-base" style={{ background: item.color + '20', color: item.color }}>
                 {item.icon}
               </div>
               <p className="text-sm font-bold">{item.title}</p>
+              <p className="text-[10px] text-gray-500 mt-1">{item.desc}</p>
             </a>
           ))}
         </div>
 
-        {/* Quick Actions */}
         <div className="mt-8 glass rounded-2xl p-6">
-          <h3 className="font-bold mb-4">Ações Rápidas</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <button className="bg-[#8b5cf6] rounded-xl p-4 font-bold hover:bg-[#7c3aed] transition">
-              Enviar Mensagem
-            </button>
-            <button className="bg-[#131320] border border-[#8b5cf6]/30 rounded-xl p-4 font-bold hover:border-[#8b5cf6] transition">
-              Ver Relatórios
-            </button>
+          <h3 className="font-black mb-4 text-gradient">Estado do Sistema</h3>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500"></span>
+              <span className="text-gray-400">Telegram Bot</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+              <span className="text-gray-400">Supabase (não configurado)</span>
+            </div>
           </div>
         </div>
       </main>
