@@ -2,78 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   background: #0a0a0f;
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.glass {
-  background: rgba(19, 19, 32, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(139, 92, 246, 0.25);
+.luna-card {
+  background: linear-gradient(145deg, rgba(19,19,32,0.9), rgba(10,10,15,0.95));
+  border: 1px solid rgba(139,92,246,0.3);
+  border-radius: 18px;
+  box-shadow: 0 4px 30px rgba(139,92,246,0.15);
+  transition: all 0.3s ease;
 }
 
-.glow {
-  box-shadow: 0 0 40px rgba(139, 92, 246, 0.2);
+.luna-card:hover {
+  border-color: rgba(139,92,246,0.7);
+  box-shadow: 0 8px 40px rgba(139,92,246,0.35);
+  transform: translateY(-3px);
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+.luna-btn {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
   color: white;
-  padding: 14px 24px;
+  padding: 14px 28px;
   border-radius: 12px;
   font-weight: 700;
   border: none;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+  letter-spacing: 0.5px;
 }
 
-.btn-primary:active { transform: scale(0.97); }
-
-.btn-secondary {
-  background: rgba(19, 19, 32, 0.8);
-  color: #a78bfa;
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-weight: 700;
-  border: 1px solid rgba(139, 92, 246, 0.4);
-  cursor: pointer;
-  transition: all 0.3s;
+.luna-btn:hover {
+  box-shadow: 0 8px 30px rgba(139,92,246,0.6);
+  transform: translateY(-2px);
 }
 
-.input-field {
+.luna-btn:active {
+  transform: scale(0.96);
+}
+
+.luna-input {
   width: 100%;
-  background: rgba(10, 10, 15, 0.9);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(10,10,15,0.9);
+  border: 1px solid rgba(139,92,246,0.4);
   border-radius: 12px;
-  padding: 14px;
+  padding: 14px 16px;
   color: white;
   font-size: 15px;
   outline: none;
   transition: all 0.3s;
 }
 
-.input-field:focus {
+.luna-input:focus {
   border-color: #8b5cf6;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 25px rgba(139,92,246,0.4);
 }
 
-.card-hover:hover {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
-  transform: translateY(-2px);
+.text-gradient {
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sidebar {
+  background: linear-gradient(180deg, #131320, #0a0a0f);
+  border-right: 1px solid rgba(139,92,246,0.2);
 }
